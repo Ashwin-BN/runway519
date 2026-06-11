@@ -78,7 +78,6 @@ export default function ItemDetailPage() {
       if (photos.length > 0) {
         const paths = photos
           .map((photo) => {
-            // Extract everything after /item-photos/
             const match = photo.url.match(/item-photos\/(.+)/)
             return match ? match[1] : null
           })
@@ -89,8 +88,6 @@ export default function ItemDetailPage() {
             .from('item-photos')
             .remove(paths)
 
-          // Log but don't block — storage cleanup failure
-          // shouldn't prevent item deletion
           if (storageError) {
             console.warn('Storage cleanup warning:', storageError.message)
           }
@@ -98,10 +95,26 @@ export default function ItemDetailPage() {
       }
 
       // ── Step 2: Delete item_photos rows
-      await supabase.from('item_photos').delete().eq('item_id', id)
+      const { error: photosError } = await supabase
+        .from('item_photos')
+        .delete()
+        .eq('item_id', id)
+
+      if (photosError) {
+        console.error('item_photos delete error:', photosError)
+        throw new Error('Failed to delete photos: ' + photosError.message)
+      }
 
       // ── Step 3: Delete item_history rows
-      await supabase.from('item_history').delete().eq('item_id', id)
+      const { error: historyError } = await supabase
+        .from('item_history')
+        .delete()
+        .eq('item_id', id)
+
+      if (historyError) {
+        console.error('item_history delete error:', historyError)
+        throw new Error('Failed to delete history: ' + historyError.message)
+      }
 
       // ── Step 4: Delete the item itself
       const { error: itemError } = await supabase
@@ -109,7 +122,10 @@ export default function ItemDetailPage() {
         .delete()
         .eq('id', id)
 
-      if (itemError) throw itemError
+      if (itemError) {
+        console.error('item delete error:', itemError)
+        throw new Error('Failed to delete item: ' + itemError.message)
+      }
 
       // ── Step 5: Navigate away
       navigate('/inventory', { replace: true })
