@@ -346,8 +346,8 @@ export default function ItemDetailPage() {
       {/* Delete confirmation modal */}
       {showDeleteConfirm && (
         <div
-          className="fixed inset-0 bg-black/50 z-50 flex items-end
-                        sm:items-center justify-center p-4"
+          className="fixed inset-0 bg-black/50 z-50 flex items-center
+                justify-center p-4"
         >
           <div className="bg-white rounded-2xl p-6 w-full max-w-sm">
             <h3 className="text-lg font-bold text-gray-800 mb-2">
