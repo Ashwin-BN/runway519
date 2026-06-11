@@ -74,20 +74,50 @@ export default function ItemDetailPage() {
   async function handleDelete() {
     setDeleting(true)
     try {
-      // Delete photos from storage first
-      for (const photo of photos) {
-        const path = photo.url.split('/item-photos/')[1]
-        if (path) {
-          await supabase.storage.from('item-photos').remove([path])
+      // ── Step 1: Delete photos from storage
+      if (photos.length > 0) {
+        const paths = photos
+          .map((photo) => {
+            // Extract everything after /item-photos/
+            const match = photo.url.match(/item-photos\/(.+)/)
+            return match ? match[1] : null
+          })
+          .filter(Boolean)
+
+        if (paths.length > 0) {
+          const { error: storageError } = await supabase.storage
+            .from('item-photos')
+            .remove(paths)
+
+          // Log but don't block — storage cleanup failure
+          // shouldn't prevent item deletion
+          if (storageError) {
+            console.warn('Storage cleanup warning:', storageError.message)
+          }
         }
       }
-      // Delete item (cascades to item_photos and item_history)
-      await supabase.from('items').delete().eq('id', id)
-      navigate('/inventory')
+
+      // ── Step 2: Delete item_photos rows
+      await supabase.from('item_photos').delete().eq('item_id', id)
+
+      // ── Step 3: Delete item_history rows
+      await supabase.from('item_history').delete().eq('item_id', id)
+
+      // ── Step 4: Delete the item itself
+      const { error: itemError } = await supabase
+        .from('items')
+        .delete()
+        .eq('id', id)
+
+      if (itemError) throw itemError
+
+      // ── Step 5: Navigate away
+      navigate('/inventory', { replace: true })
     } catch (err) {
-      console.error(err)
-    } finally {
+      console.error('Delete failed:', err)
       setDeleting(false)
+      setShowDeleteConfirm(false)
+      alert('Delete failed: ' + (err.message ?? 'Unknown error'))
     }
   }
 
