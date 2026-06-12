@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useAnalytics } from '../hooks/useAnalytics'
 import KpiCard from '../components/charts/KpiCard'
 import SlowMovers from '../components/charts/SlowMovers'
+import { AnalyticsSkeleton } from '../components/ui/Skeleton'
 import {
   BarChart,
   Bar,
@@ -35,19 +36,7 @@ export default function AnalyticsPage() {
     fetchAnalytics()
   }, [fetchAnalytics])
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div
-            className="w-8 h-8 border-4 border-pink-500 border-t-transparent
-                          rounded-full animate-spin mx-auto mb-2"
-          />
-          <p className="text-xs text-gray-400">Crunching numbers...</p>
-        </div>
-      </div>
-    )
-  }
+  if (loading) return <AnalyticsSkeleton />
 
   if (error) {
     return (

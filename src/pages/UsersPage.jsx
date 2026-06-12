@@ -4,6 +4,7 @@ import { useUsers } from '../hooks/useUsers'
 import { useNavigate } from 'react-router-dom'
 import RoleBadge from '../components/ui/RoleBadge'
 import Button from '../components/ui/Button'
+import { UsersSkeleton } from '../components/ui/Skeleton'
 import {
   Users,
   Shield,
@@ -126,16 +127,7 @@ export default function UsersPage() {
     return acc
   }, {})
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div
-          className="w-8 h-8 border-4 border-pink-500 border-t-transparent
-                        rounded-full animate-spin"
-        />
-      </div>
-    )
-  }
+  if (loading) return <UsersSkeleton />
 
   return (
     <div className="max-w-2xl mx-auto">

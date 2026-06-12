@@ -5,11 +5,13 @@ import { useAuth } from '../context/AuthContext'
 import { formatPrice } from '../constants/inventoryConstants'
 import { useInventoryFilters } from '../hooks/useInventoryFilters'
 import { useBulkSelect } from '../hooks/useBulkSelect'
+import { InventorySkeleton } from '../components/ui/Skeleton'
+import { usePullToRefresh } from '../hooks/usePullToRefresh'
 import FilterBar from '../components/ui/FilterBar'
 import BulkActionBar from '../components/ui/BulkActionBar'
 import StatusBadge from '../components/ui/StatusBadge'
 import Button from '../components/ui/Button'
-import { Plus, Package, CheckSquare, Square } from 'lucide-react'
+import { Plus, Package, CheckSquare, Square, RefreshCw } from 'lucide-react'
 
 export default function InventoryPage() {
   const navigate = useNavigate()
@@ -53,6 +55,8 @@ export default function InventoryPage() {
     setLoading(false)
   }, [])
 
+  const { isPulling, pullDistance } = usePullToRefresh(fetchItems)
+
   useEffect(() => {
     fetchItems()
   }, [fetchItems])
@@ -93,6 +97,15 @@ export default function InventoryPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
+      {/* Pull to refresh indicator */}
+      {pullDistance > 0 && (
+        <div
+          className="flex items-center justify-center text-pink-500 transition-all"
+          style={{ height: Math.min(pullDistance * 0.5, 40) }}
+        >
+          <RefreshCw size={18} className={isPulling ? 'animate-spin' : ''} />
+        </div>
+      )}
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
@@ -137,12 +150,7 @@ export default function InventoryPage() {
 
       {/* Item list */}
       {loading ? (
-        <div className="flex items-center justify-center h-48">
-          <div
-            className="w-8 h-8 border-4 border-pink-500 border-t-transparent
-                          rounded-full animate-spin"
-          />
-        </div>
+        <InventorySkeleton />
       ) : filtered.length === 0 ? (
         <EmptyState
           hasFilters={hasActiveFilters || !!filters.search}
