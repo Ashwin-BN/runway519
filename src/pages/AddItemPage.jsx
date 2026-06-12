@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { itemSchemaWithRefinement } from '../utils/itemSchema'
+import { useAppToast } from '../components/layout/AppLayout'
 import {
   DEPARTMENTS,
   ITEM_STATUSES,
@@ -22,7 +23,7 @@ export default function AddItemPage() {
   const isEditing = Boolean(id)
   const navigate = useNavigate()
   const { user, isMarkdown } = useAuth()
-
+  const toast = useAppToast()
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(isEditing)
   const [photos, setPhotos] = useState([]) // { file?, url, position }
@@ -134,8 +135,10 @@ export default function AddItemPage() {
         new_value: payload,
       })
 
+      toast.success(isEditing ? 'Item updated' : 'Item added successfully')
       navigate(`/inventory/${itemId}`)
     } catch (err) {
+      toast.error(err.message ?? 'Something went wrong')
       setServerError(err.message ?? 'Something went wrong')
     } finally {
       setLoading(false)

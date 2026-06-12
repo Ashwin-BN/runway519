@@ -4,6 +4,7 @@ import { useUsers } from '../hooks/useUsers'
 import { useNavigate } from 'react-router-dom'
 import RoleBadge from '../components/ui/RoleBadge'
 import Button from '../components/ui/Button'
+import { useAppToast } from '../components/layout/AppLayout'
 import { UsersSkeleton } from '../components/ui/Skeleton'
 import {
   Users,
@@ -74,7 +75,7 @@ export default function UsersPage() {
   const { isAdmin, user: currentUser } = useAuth()
   const { users, loading, error, fetchUsers, updateRole, toggleSuspend } =
     useUsers()
-
+  const toast = useAppToast()
   const [showRoleInfo, setShowRoleInfo] = useState(false)
   const [changingRole, setChangingRole] = useState(null) // userId
   const [togglingUser, setTogglingUser] = useState(null) // userId
@@ -93,8 +94,9 @@ export default function UsersPage() {
     setChangingRole(userId)
     try {
       await updateRole(userId, newRole)
+      toast.success('Role updated successfully')
     } catch (err) {
-      alert('Failed to update role: ' + err.message)
+      toast.error('Failed to update role: ' + err.message)
     } finally {
       setChangingRole(null)
     }
@@ -105,8 +107,9 @@ export default function UsersPage() {
     setTogglingUser(userId)
     try {
       await toggleSuspend(userId, suspended)
+      toast.success(suspended ? 'User reactivated' : 'User suspended')
     } catch (err) {
-      alert('Failed to update user: ' + err.message)
+      toast.error('Failed to update user: ' + err.message)
     } finally {
       setTogglingUser(null)
     }

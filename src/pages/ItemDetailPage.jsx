@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { useAppToast } from '../components/layout/AppLayout'
 import {
   formatPrice,
   STATUS_COLORS,
@@ -29,7 +30,7 @@ export default function ItemDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { isAdmin, isMarkdown, user } = useAuth()
-
+  const toast = useAppToast()
   const [item, setItem] = useState(null)
   const [photos, setPhotos] = useState([])
   const [history, setHistory] = useState([])
@@ -129,11 +130,15 @@ export default function ItemDetailPage() {
 
       // ── Step 5: Navigate away
       navigate('/inventory', { replace: true })
+      if (itemError) {
+        toast.error('Delete failed: ' + itemError.message)
+        return
+      }
     } catch (err) {
       console.error('Delete failed:', err)
+      toast.error(err.message ?? 'Delete failed. Please try again.')
       setDeleting(false)
       setShowDeleteConfirm(false)
-      alert('Delete failed: ' + (err.message ?? 'Unknown error'))
     }
   }
 
