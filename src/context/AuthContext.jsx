@@ -48,6 +48,7 @@ export function AuthProvider({ children }) {
     role: profile?.role ?? 'associate',
     isAdmin: profile?.role === 'admin',
     isMarkdown: ['admin', 'supervisor', 'markdown'].includes(profile?.role),
+    isSuspended: profile?.suspended === true,
     signOut: () => supabase.auth.signOut(),
   }
 
