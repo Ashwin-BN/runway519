@@ -6,7 +6,6 @@ import { ToastContainer } from '../ui/Toast'
 import { useToast } from '../../hooks/useToast'
 import { createContext, useContext } from 'react'
 
-// ── Toast context so any page can trigger toasts
 export const ToastContext = createContext(null)
 export const useAppToast = () => useContext(ToastContext)
 
@@ -15,13 +14,16 @@ export default function AppLayout() {
 
   return (
     <ToastContext.Provider value={{ success, error, warning }}>
-      <div className="flex h-screen bg-gray-50 overflow-hidden">
-        {/* Sidebar — desktop */}
+      <div
+        className="flex h-screen overflow-hidden"
+        style={{ backgroundColor: 'var(--page-bg)' }}
+      >
+        {/* Sidebar — desktop only */}
         <aside className="hidden md:flex">
           <Sidebar />
         </aside>
 
-        {/* Main */}
+        {/* Main content */}
         <div className="flex flex-col flex-1 overflow-hidden">
           <TopBar />
           <main
@@ -32,12 +34,18 @@ export default function AppLayout() {
           </main>
         </div>
 
-        {/* Bottom nav — mobile */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50">
+        {/* Bottom nav — mobile only, always visible */}
+        <div
+          className="md:hidden fixed bottom-0 left-0 right-0 z-50
+                      border-t"
+          style={{
+            backgroundColor: 'var(--nav-bg)',
+            borderColor: 'var(--nav-border)',
+          }}
+        >
           <BottomNav />
-        </nav>
+        </div>
 
-        {/* Toast notifications */}
         <ToastContainer toasts={toasts} onDismiss={dismiss} />
       </div>
     </ToastContext.Provider>
