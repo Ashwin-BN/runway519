@@ -75,7 +75,7 @@ The app mirrors how Winners actually operates: real 2-digit department codes,
 | [API Reference](docs/API.md)         | Supabase queries used throughout the app       |
 | [Walkthrough](docs/WALKTHROUGH.md)   | Feature-by-feature user guide with screenshots |
 | [Roles & Permissions](docs/ROLES.md) | Access control matrix and permission logic     |
-| [Testing](docs/TESTING.md)           | Manual QA checklist and unit test coverage     |
+| [Test Report](docs/TESTING.html)     | Full QA results · 76/76 passing                |
 | [Deployment](docs/DEPLOYMENT.md)     | Vercel deployment and environment setup        |
 | [Changelog](docs/CHANGELOG.md)       | Version history and release notes              |
 

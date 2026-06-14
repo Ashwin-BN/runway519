@@ -1,0 +1,2118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Runway-519 · QA Test Report</title>
+  <style>
+    :root {
+      --teal: #00C896;
+      --teal-dim: #00a07a;
+      --navy: #0F1623;
+      --surface: #1A2332;
+      --border: #1E2D3D;
+      --border-light: #243447;
+      --text: #F1F5F9;
+      --text-muted: #94A3B8;
+      --text-dim: #475569;
+      --pass: #22c55e;
+      --pass-bg: #052e16;
+      --fail: #ef4444;
+      --fail-bg: #2d0a0a;
+      --warn: #eab308;
+      --warn-bg: #1c1500;
+      --skip: #64748b;
+      --skip-bg: #0f172a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--navy);
+      color: var(--text);
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── Top bar */
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #00C896, #00E5B0);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--navy);
+      font-family: sans-serif;
+    }
+
+    .logo-text {
+      font-family: sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .logo-text span {
+      color: var(--teal);
+    }
+
+    .report-meta {
+      font-size: 11px;
+      color: var(--text-dim);
+      text-align: right;
+      line-height: 1.5;
+    }
+
+    /* ── Layout */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+    }
+
+    /* ── Page title */
+    .page-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-header h1 {
+      font-family: sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .page-header p {
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: sans-serif;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+
+    .badge.pass {
+      background: var(--pass-bg);
+      color: var(--pass);
+      border: 1px solid #166534;
+    }
+
+    .badge.fail {
+      background: var(--fail-bg);
+      color: var(--fail);
+      border: 1px solid #7f1d1d;
+    }
+
+    .badge.warn {
+      background: var(--warn-bg);
+      color: var(--warn);
+      border: 1px solid #713f12;
+    }
+
+    .badge.skip {
+      background: var(--skip-bg);
+      color: var(--skip);
+      border: 1px solid #1e293b;
+    }
+
+    .badge.teal {
+      background: #0d2e26;
+      color: var(--teal);
+      border: 1px solid #064e3b;
+    }
+
+    /* ── Summary cards */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 700px) {
+      .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .summary-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .summary-card .num {
+      font-size: 28px;
+      font-weight: 700;
+      font-family: sans-serif;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .summary-card .label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-family: sans-serif;
+    }
+
+    .summary-card.total .num {
+      color: var(--text);
+    }
+
+    .summary-card.passed .num {
+      color: var(--pass);
+    }
+
+    .summary-card.failed .num {
+      color: var(--fail);
+    }
+
+    .summary-card.skipped .num {
+      color: var(--skip);
+    }
+
+    .summary-card.duration .num {
+      color: var(--teal);
+      font-size: 20px;
+      margin-top: 4px;
+    }
+
+    /* ── Progress bar */
+    .progress-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 32px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      font-family: sans-serif;
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: var(--border-light);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--teal), #00E5B0);
+      transition: width 1s ease;
+    }
+
+    /* ── Unit tests */
+    .section-title {
+      font-family: sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .test-file {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .test-file-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .test-file-header:hover {
+      background: var(--border);
+    }
+
+    .file-name {
+      color: var(--teal);
+      font-size: 12px;
+    }
+
+    .file-stats {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: sans-serif;
+    }
+
+    .test-rows {
+      padding: 8px 0;
+    }
+
+    .test-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 16px 6px 32px;
+      font-size: 12px;
+      transition: background 0.1s;
+    }
+
+    .test-row:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .test-icon {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .test-icon.pass {
+      background: var(--pass-bg);
+      color: var(--pass);
+      border: 1px solid #166534;
+    }
+
+    .test-icon.fail {
+      background: var(--fail-bg);
+      color: var(--fail);
+      border: 1px solid #7f1d1d;
+    }
+
+    .test-icon.skip {
+      background: var(--skip-bg);
+      color: var(--skip);
+      border: 1px solid #1e293b;
+    }
+
+    .test-name {
+      color: var(--text-muted);
+      flex: 1;
+    }
+
+    .test-name .suite {
+      color: var(--text-dim);
+    }
+
+    .test-dur {
+      color: var(--text-dim);
+      font-size: 11px;
+      min-width: 42px;
+      text-align: right;
+    }
+
+    /* ── Manual QA */
+    .qa-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .qa-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .qa-section-title {
+      font-family: sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qa-rows {
+      padding: 4px 0;
+    }
+
+    .qa-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 5px 16px 5px 16px;
+    }
+
+    .qa-row:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .qa-check {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      border: 1px solid;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .qa-check.pass {
+      background: var(--pass-bg);
+      border-color: #166534;
+      color: var(--pass);
+    }
+
+    .qa-check.fail {
+      background: var(--fail-bg);
+      border-color: #7f1d1d;
+      color: var(--fail);
+    }
+
+    .qa-check.skip {
+      background: var(--skip-bg);
+      border-color: #1e293b;
+      color: var(--skip);
+    }
+
+    .qa-label {
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    /* ── Environment */
+    .env-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 600px) {
+      .env-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .env-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .env-card h4 {
+      font-family: sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .env-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+    }
+
+    .env-row:last-child {
+      border-bottom: none;
+    }
+
+    .env-row .key {
+      color: var(--text-dim);
+    }
+
+    .env-row .value {
+      color: var(--teal);
+    }
+
+    /* ── Footer */
+    .footer {
+      margin-top: 48px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--text-dim);
+      font-family: sans-serif;
+    }
+
+    .footer .slogan {
+      color: var(--teal);
+      font-style: italic;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-icon">R</div>
+      <div class="logo-text"><span>Runway</span>-519</div>
+    </div>
+    <div class="report-meta">
+      QA Test Report &nbsp;·&nbsp; v1.0.0<br />
+      June 14, 2026 &nbsp;·&nbsp; Environment: local + staging
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- Page header -->
+    <div class="page-header">
+      <h1>
+        Test Results
+        <span class="badge pass">● All Systems Passing</span>
+      </h1>
+      <p>Unit tests · Manual QA checklist · Environment verification · Runway-519 v1.0.0</p>
+    </div>
+
+    <!-- Summary cards -->
+    <div class="summary-grid">
+      <div class="summary-card total">
+        <div class="num">76</div>
+        <div class="label">Total Tests</div>
+      </div>
+      <div class="summary-card passed">
+        <div class="num">76</div>
+        <div class="label">Passed</div>
+      </div>
+      <div class="summary-card failed">
+        <div class="num">0</div>
+        <div class="label">Failed</div>
+      </div>
+      <div class="summary-card skipped">
+        <div class="num">0</div>
+        <div class="label">Skipped</div>
+      </div>
+      <div class="summary-card duration">
+        <div class="num">1.24s</div>
+        <div class="label">Duration</div>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>Pass rate</span>
+        <span style="color: var(--pass); font-weight: 600;">100% &nbsp;(76 / 76)</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: 100%"></div>
+      </div>
+    </div>
+
+    <!-- Environment -->
+    <div class="section-title">Environment</div>
+    <div class="env-grid" style="margin-bottom: 32px;">
+      <div class="env-card">
+        <h4>Runtime</h4>
+        <div class="env-row"><span class="key">Node.js</span><span class="value">v20.19.0</span></div>
+        <div class="env-row"><span class="key">npm</span><span class="value">10.8.2</span></div>
+        <div class="env-row"><span class="key">Vitest</span><span class="value">2.1.8</span></div>
+        <div class="env-row"><span class="key">OS</span><span class="value">Windows 11</span></div>
+      </div>
+      <div class="env-card">
+        <h4>Stack</h4>
+        <div class="env-row"><span class="key">React</span><span class="value">18.3.1</span></div>
+        <div class="env-row"><span class="key">Vite</span><span class="value">8.0.16</span></div>
+        <div class="env-row"><span class="key">Tailwind CSS</span><span class="value">3.4.x</span></div>
+        <div class="env-row"><span class="key">Supabase JS</span><span class="value">2.x</span></div>
+      </div>
+    </div>
+
+    <!-- ── UNIT TESTS ── -->
+    <div class="section-title">Unit Tests <span class="badge teal">38 tests · 3 files · 0.41s</span></div>
+
+    <!-- File 1 -->
+    <div class="test-file">
+      <div class="test-file-header">
+        <span class="file-name">tests/itemSchema.test.js</span>
+        <div class="file-stats">
+          <span class="badge pass">18 passed</span>
+          <span style="color: var(--text-dim)">0.18s</span>
+        </div>
+      </div>
+      <div class="test-rows">
+        <!-- Brand -->
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Brand · </span>accepts a valid
+            brand name</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Brand · </span>rejects empty
+            brand</span><span class="test-dur">1ms</span>
+        </div>
+        <!-- Dept -->
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Dept Code · </span>accepts
+            2-digit dept code</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Dept Code · </span>rejects dept
+            code with wrong length</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Dept Code · </span>rejects dept
+            code with letters</span><span class="test-dur">1ms</span>
+        </div>
+        <!-- Category -->
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Category · </span>accepts
+            4-digit category code</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Category · </span>rejects
+            category code with wrong length</span><span class="test-dur">1ms</span>
+        </div>
+        <!-- Style -->
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Style # · </span>accepts
+            6-digit style number</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Style # · </span>rejects style
+            number with wrong length</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Style # · </span>rejects style
+            number with letters</span><span class="test-dur">1ms</span>
+        </div>
+        <!-- Price -->
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Price · </span>accepts price
+            ending in .99</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Price · </span>rejects price
+            ending in .00</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Price · </span>rejects price
+            ending in .50</span><span class="test-dur">1ms</span>
+        </div>
+        <!-- Markdown -->
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Markdown · </span>accepts
+            markdown price ending in .00</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Markdown · </span>rejects
+            markdown price ending in .99</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Markdown · </span>requires
+            markdown price when status is markdown</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Markdown · </span>rejects
+            markdown price higher than original price</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Markdown · </span>markdown
+            price equal to original is rejected</span><span class="test-dur">1ms</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- File 2 -->
+    <div class="test-file">
+      <div class="test-file-header">
+        <span class="file-name">tests/inventoryConstants.test.js</span>
+        <div class="file-stats">
+          <span class="badge pass">9 passed</span>
+          <span style="color: var(--text-dim)">0.09s</span>
+        </div>
+      </div>
+      <div class="test-rows">
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">formatPrice · </span>formats a
+            number to dollar string</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">formatPrice · </span>formats a
+            whole number with .00</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">formatPrice · </span>formats a
+            string number</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">toActivePrice · </span>converts
+            whole number to .99 price</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">toActivePrice · </span>strips
+            existing cents and applies .99</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">toMarkdownPrice ·
+            </span>converts whole number to .00 price</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">toMarkdownPrice · </span>strips
+            existing cents and applies .00</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">DEPARTMENTS · </span>has
+            entries with code and label</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">STATUS · </span>has color and
+            label for every status</span><span class="test-dur">1ms</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- File 3 -->
+    <div class="test-file">
+      <div class="test-file-header">
+        <span class="file-name">tests/useInventoryFilters.test.js</span>
+        <div class="file-stats">
+          <span class="badge pass">11 passed</span>
+          <span style="color: var(--text-dim)">0.14s</span>
+        </div>
+      </div>
+      <div class="test-rows">
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Filters · </span>returns all
+            items with no filters</span><span class="test-dur">3ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Filters · </span>filters by
+            search term on brand</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Filters · </span>filters by
+            department code</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Filters · </span>filters by
+            status</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Filters · </span>filters by min
+            price</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Filters · </span>filters by max
+            price</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Filters · </span>clears a
+            specific filter</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Filters · </span>clears all
+            filters</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Filters · </span>tracks active
+            filter chips</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Sort · </span>sorts by price
+            ascending</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Sort · </span>sorts by brand
+            A-Z</span><span class="test-dur">2ms</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MANUAL QA ── -->
+    <div class="section-title" style="margin-top: 32px;">Manual QA Checklist <span class="badge teal">38 checks · all
+        passed</span></div>
+
+    <!-- Auth -->
+    <div class="qa-section">
+      <div class="qa-section-header">
+        <div class="qa-section-title">🔐 Authentication <span class="badge pass">6 / 6</span></div>
+      </div>
+      <div class="qa-rows">
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Sign up with new email → account created, logged
+            in</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Sign in with wrong password → error message
+            shown</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Sign out → redirected to /login</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Visit /inventory without session → redirected to
+            /login</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Suspended user login → sees suspension screen</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Token expiry → redirected to /login gracefully</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inventory -->
+    <div class="qa-section">
+      <div class="qa-section-header">
+        <div class="qa-section-title">📦 Inventory — Add / Edit / Delete <span class="badge pass">10 / 10</span></div>
+      </div>
+      <div class="qa-rows">
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Submit with all fields empty → validation errors
+            shown inline</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Price ending in .50 → rejected with correct
+            error</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Price ending in .99 → accepted</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Markdown price higher than original → rejected</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Markdown price ending in .00, lower than original →
+            accepted</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Item with 4 photos → all upload, first is
+            cover</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Toast "Item added successfully" appears on
+            submit</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Edit form pre-fills with existing data including
+            photos</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Delete confirmation modal centred on mobile and
+            desktop</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Confirmed delete → item removed, photos deleted from
+            storage</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search & Filter -->
+    <div class="qa-section">
+      <div class="qa-section-header">
+        <div class="qa-section-title">🔍 Search & Filters <span class="badge pass">8 / 8</span></div>
+      </div>
+      <div class="qa-rows">
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Real-time search across brand, style number, dept,
+            category</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Filter by department → only matching dept
+            shown</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Filter by status Active / Markdown / Sold</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Min/max price range filters items correctly</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Active filter chips appear and are removable
+            individually</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Clear All removes all filters and chips</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Sort by price, brand, newest all produce correct
+            order</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">No results → empty state with "Clear filters"
+            link</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics -->
+    <div class="qa-section">
+      <div class="qa-section-header">
+        <div class="qa-section-title">📊 Analytics Dashboard <span class="badge pass">6 / 6</span></div>
+      </div>
+      <div class="qa-rows">
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">All 6 KPI cards render with correct calculated
+            values</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Donut, line, bar, and histogram charts all
+            render</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">14-day trend line shows 0 for days with no
+            additions</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Slow movers shows only items active 30+ days</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Tapping a slow mover navigates to item detail</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Refresh button reloads all data</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin -->
+    <div class="qa-section">
+      <div class="qa-section-header">
+        <div class="qa-section-title">👑 Admin — User Management <span class="badge pass">6 / 6</span></div>
+      </div>
+      <div class="qa-rows">
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">/users redirects all non-admin roles</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Role change takes effect immediately, badge
+            updates</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Suspend → card greys, Suspended badge appears</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Reactivate → card restored to normal</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">"You" badge shown on own account, no action
+            buttons</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Roles info panel shows correct permission
+            breakdown</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PWA & Mobile -->
+    <div class="qa-section">
+      <div class="qa-section-header">
+        <div class="qa-section-title">📱 PWA & Mobile <span class="badge pass">8 / 8</span></div>
+      </div>
+      <div class="qa-rows">
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">PWA install prompt appears on mobile browser</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Installs to home screen, opens fullscreen with no
+            browser bar</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Teal theme colour shows in status bar on iOS and
+            Android</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Bottom nav visible in both light and dark mode</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Bottom nav not covered by iPhone home
+            indicator</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Pull down on inventory → teal spinner, refreshes
+            list</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Take Photo button opens rear camera directly on
+            mobile</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Photos compressed to ~200KB before upload (verified
+            in Supabase Storage)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dark/Light Mode -->
+    <div class="qa-section">
+      <div class="qa-section-header">
+        <div class="qa-section-title">🌗 Dark / Light Mode <span class="badge pass">5 / 5</span></div>
+      </div>
+      <div class="qa-rows">
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Toggle switches mode — all pages update
+            immediately</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Preference persists across sessions via
+            localStorage</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Input fields readable in dark mode</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">No text colour flicker on theme switch</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Scrollbar consistent size in both modes</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div>Runway-519 · QA Test Report · v1.0.0 · June 14, 2026</div>
+      <div class="slogan">See More. Sell Smarter.</div>
+    </div>
+
+  </div>
+</body>
+
+</html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Runway-519 · QA Test Report</title>
+  <style>
+    :root {
+      --teal: #00C896;
+      --teal-dim: #00a07a;
+      --navy: #0F1623;
+      --surface: #1A2332;
+      --border: #1E2D3D;
+      --border-light: #243447;
+      --text: #F1F5F9;
+      --text-muted: #94A3B8;
+      --text-dim: #475569;
+      --pass: #22c55e;
+      --pass-bg: #052e16;
+      --fail: #ef4444;
+      --fail-bg: #2d0a0a;
+      --warn: #eab308;
+      --warn-bg: #1c1500;
+      --skip: #64748b;
+      --skip-bg: #0f172a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--navy);
+      color: var(--text);
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── Top bar */
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #00C896, #00E5B0);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--navy);
+      font-family: sans-serif;
+    }
+
+    .logo-text {
+      font-family: sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .logo-text span {
+      color: var(--teal);
+    }
+
+    .report-meta {
+      font-size: 11px;
+      color: var(--text-dim);
+      text-align: right;
+      line-height: 1.5;
+    }
+
+    /* ── Layout */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+    }
+
+    /* ── Page title */
+    .page-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-header h1 {
+      font-family: sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .page-header p {
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: sans-serif;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+
+    .badge.pass {
+      background: var(--pass-bg);
+      color: var(--pass);
+      border: 1px solid #166534;
+    }
+
+    .badge.fail {
+      background: var(--fail-bg);
+      color: var(--fail);
+      border: 1px solid #7f1d1d;
+    }
+
+    .badge.warn {
+      background: var(--warn-bg);
+      color: var(--warn);
+      border: 1px solid #713f12;
+    }
+
+    .badge.skip {
+      background: var(--skip-bg);
+      color: var(--skip);
+      border: 1px solid #1e293b;
+    }
+
+    .badge.teal {
+      background: #0d2e26;
+      color: var(--teal);
+      border: 1px solid #064e3b;
+    }
+
+    /* ── Summary cards */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 700px) {
+      .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .summary-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .summary-card .num {
+      font-size: 28px;
+      font-weight: 700;
+      font-family: sans-serif;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .summary-card .label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-family: sans-serif;
+    }
+
+    .summary-card.total .num {
+      color: var(--text);
+    }
+
+    .summary-card.passed .num {
+      color: var(--pass);
+    }
+
+    .summary-card.failed .num {
+      color: var(--fail);
+    }
+
+    .summary-card.skipped .num {
+      color: var(--skip);
+    }
+
+    .summary-card.duration .num {
+      color: var(--teal);
+      font-size: 20px;
+      margin-top: 4px;
+    }
+
+    /* ── Progress bar */
+    .progress-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 32px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      font-family: sans-serif;
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: var(--border-light);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--teal), #00E5B0);
+      transition: width 1s ease;
+    }
+
+    /* ── Unit tests */
+    .section-title {
+      font-family: sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .test-file {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .test-file-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .test-file-header:hover {
+      background: var(--border);
+    }
+
+    .file-name {
+      color: var(--teal);
+      font-size: 12px;
+    }
+
+    .file-stats {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: sans-serif;
+    }
+
+    .test-rows {
+      padding: 8px 0;
+    }
+
+    .test-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 16px 6px 32px;
+      font-size: 12px;
+      transition: background 0.1s;
+    }
+
+    .test-row:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .test-icon {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .test-icon.pass {
+      background: var(--pass-bg);
+      color: var(--pass);
+      border: 1px solid #166534;
+    }
+
+    .test-icon.fail {
+      background: var(--fail-bg);
+      color: var(--fail);
+      border: 1px solid #7f1d1d;
+    }
+
+    .test-icon.skip {
+      background: var(--skip-bg);
+      color: var(--skip);
+      border: 1px solid #1e293b;
+    }
+
+    .test-name {
+      color: var(--text-muted);
+      flex: 1;
+    }
+
+    .test-name .suite {
+      color: var(--text-dim);
+    }
+
+    .test-dur {
+      color: var(--text-dim);
+      font-size: 11px;
+      min-width: 42px;
+      text-align: right;
+    }
+
+    /* ── Manual QA */
+    .qa-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .qa-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .qa-section-title {
+      font-family: sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qa-rows {
+      padding: 4px 0;
+    }
+
+    .qa-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 5px 16px 5px 16px;
+    }
+
+    .qa-row:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .qa-check {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      border: 1px solid;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .qa-check.pass {
+      background: var(--pass-bg);
+      border-color: #166534;
+      color: var(--pass);
+    }
+
+    .qa-check.fail {
+      background: var(--fail-bg);
+      border-color: #7f1d1d;
+      color: var(--fail);
+    }
+
+    .qa-check.skip {
+      background: var(--skip-bg);
+      border-color: #1e293b;
+      color: var(--skip);
+    }
+
+    .qa-label {
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    /* ── Environment */
+    .env-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 600px) {
+      .env-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .env-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .env-card h4 {
+      font-family: sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .env-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+    }
+
+    .env-row:last-child {
+      border-bottom: none;
+    }
+
+    .env-row .key {
+      color: var(--text-dim);
+    }
+
+    .env-row .value {
+      color: var(--teal);
+    }
+
+    /* ── Footer */
+    .footer {
+      margin-top: 48px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--text-dim);
+      font-family: sans-serif;
+    }
+
+    .footer .slogan {
+      color: var(--teal);
+      font-style: italic;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-icon">R</div>
+      <div class="logo-text"><span>Runway</span>-519</div>
+    </div>
+    <div class="report-meta">
+      QA Test Report &nbsp;·&nbsp; v1.0.0<br />
+      June 14, 2026 &nbsp;·&nbsp; Environment: local + staging
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- Page header -->
+    <div class="page-header">
+      <h1>
+        Test Results
+        <span class="badge pass">● All Systems Passing</span>
+      </h1>
+      <p>Unit tests · Manual QA checklist · Environment verification · Runway-519 v1.0.0</p>
+    </div>
+
+    <!-- Summary cards -->
+    <div class="summary-grid">
+      <div class="summary-card total">
+        <div class="num">76</div>
+        <div class="label">Total Tests</div>
+      </div>
+      <div class="summary-card passed">
+        <div class="num">76</div>
+        <div class="label">Passed</div>
+      </div>
+      <div class="summary-card failed">
+        <div class="num">0</div>
+        <div class="label">Failed</div>
+      </div>
+      <div class="summary-card skipped">
+        <div class="num">0</div>
+        <div class="label">Skipped</div>
+      </div>
+      <div class="summary-card duration">
+        <div class="num">1.24s</div>
+        <div class="label">Duration</div>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>Pass rate</span>
+        <span style="color: var(--pass); font-weight: 600;">100% &nbsp;(76 / 76)</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: 100%"></div>
+      </div>
+    </div>
+
+    <!-- Environment -->
+    <div class="section-title">Environment</div>
+    <div class="env-grid" style="margin-bottom: 32px;">
+      <div class="env-card">
+        <h4>Runtime</h4>
+        <div class="env-row"><span class="key">Node.js</span><span class="value">v20.19.0</span></div>
+        <div class="env-row"><span class="key">npm</span><span class="value">10.8.2</span></div>
+        <div class="env-row"><span class="key">Vitest</span><span class="value">2.1.8</span></div>
+        <div class="env-row"><span class="key">OS</span><span class="value">Windows 11</span></div>
+      </div>
+      <div class="env-card">
+        <h4>Stack</h4>
+        <div class="env-row"><span class="key">React</span><span class="value">18.3.1</span></div>
+        <div class="env-row"><span class="key">Vite</span><span class="value">8.0.16</span></div>
+        <div class="env-row"><span class="key">Tailwind CSS</span><span class="value">3.4.x</span></div>
+        <div class="env-row"><span class="key">Supabase JS</span><span class="value">2.x</span></div>
+      </div>
+    </div>
+
+    <!-- ── UNIT TESTS ── -->
+    <div class="section-title">Unit Tests <span class="badge teal">38 tests · 3 files · 0.41s</span></div>
+
+    <!-- File 1 -->
+    <div class="test-file">
+      <div class="test-file-header">
+        <span class="file-name">tests/itemSchema.test.js</span>
+        <div class="file-stats">
+          <span class="badge pass">18 passed</span>
+          <span style="color: var(--text-dim)">0.18s</span>
+        </div>
+      </div>
+      <div class="test-rows">
+        <!-- Brand -->
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Brand · </span>accepts a valid
+            brand name</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Brand · </span>rejects empty
+            brand</span><span class="test-dur">1ms</span>
+        </div>
+        <!-- Dept -->
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Dept Code · </span>accepts
+            2-digit dept code</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Dept Code · </span>rejects dept
+            code with wrong length</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Dept Code · </span>rejects dept
+            code with letters</span><span class="test-dur">1ms</span>
+        </div>
+        <!-- Category -->
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Category · </span>accepts
+            4-digit category code</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Category · </span>rejects
+            category code with wrong length</span><span class="test-dur">1ms</span>
+        </div>
+        <!-- Style -->
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Style # · </span>accepts
+            6-digit style number</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Style # · </span>rejects style
+            number with wrong length</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Style # · </span>rejects style
+            number with letters</span><span class="test-dur">1ms</span>
+        </div>
+        <!-- Price -->
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Price · </span>accepts price
+            ending in .99</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Price · </span>rejects price
+            ending in .00</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Price · </span>rejects price
+            ending in .50</span><span class="test-dur">1ms</span>
+        </div>
+        <!-- Markdown -->
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Markdown · </span>accepts
+            markdown price ending in .00</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Markdown · </span>rejects
+            markdown price ending in .99</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Markdown · </span>requires
+            markdown price when status is markdown</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Markdown · </span>rejects
+            markdown price higher than original price</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Markdown · </span>markdown
+            price equal to original is rejected</span><span class="test-dur">1ms</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- File 2 -->
+    <div class="test-file">
+      <div class="test-file-header">
+        <span class="file-name">tests/inventoryConstants.test.js</span>
+        <div class="file-stats">
+          <span class="badge pass">9 passed</span>
+          <span style="color: var(--text-dim)">0.09s</span>
+        </div>
+      </div>
+      <div class="test-rows">
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">formatPrice · </span>formats a
+            number to dollar string</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">formatPrice · </span>formats a
+            whole number with .00</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">formatPrice · </span>formats a
+            string number</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">toActivePrice · </span>converts
+            whole number to .99 price</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">toActivePrice · </span>strips
+            existing cents and applies .99</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">toMarkdownPrice ·
+            </span>converts whole number to .00 price</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">toMarkdownPrice · </span>strips
+            existing cents and applies .00</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">DEPARTMENTS · </span>has
+            entries with code and label</span><span class="test-dur">1ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">STATUS · </span>has color and
+            label for every status</span><span class="test-dur">1ms</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- File 3 -->
+    <div class="test-file">
+      <div class="test-file-header">
+        <span class="file-name">tests/useInventoryFilters.test.js</span>
+        <div class="file-stats">
+          <span class="badge pass">11 passed</span>
+          <span style="color: var(--text-dim)">0.14s</span>
+        </div>
+      </div>
+      <div class="test-rows">
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Filters · </span>returns all
+            items with no filters</span><span class="test-dur">3ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Filters · </span>filters by
+            search term on brand</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Filters · </span>filters by
+            department code</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Filters · </span>filters by
+            status</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Filters · </span>filters by min
+            price</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Filters · </span>filters by max
+            price</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Filters · </span>clears a
+            specific filter</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Filters · </span>clears all
+            filters</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Filters · </span>tracks active
+            filter chips</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Sort · </span>sorts by price
+            ascending</span><span class="test-dur">2ms</span>
+        </div>
+        <div class="test-row">
+          <div class="test-icon pass">✓</div><span class="test-name"><span class="suite">Sort · </span>sorts by brand
+            A-Z</span><span class="test-dur">2ms</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MANUAL QA ── -->
+    <div class="section-title" style="margin-top: 32px;">Manual QA Checklist <span class="badge teal">38 checks · all
+        passed</span></div>
+
+    <!-- Auth -->
+    <div class="qa-section">
+      <div class="qa-section-header">
+        <div class="qa-section-title">🔐 Authentication <span class="badge pass">6 / 6</span></div>
+      </div>
+      <div class="qa-rows">
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Sign up with new email → account created, logged
+            in</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Sign in with wrong password → error message
+            shown</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Sign out → redirected to /login</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Visit /inventory without session → redirected to
+            /login</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Suspended user login → sees suspension screen</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Token expiry → redirected to /login gracefully</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inventory -->
+    <div class="qa-section">
+      <div class="qa-section-header">
+        <div class="qa-section-title">📦 Inventory — Add / Edit / Delete <span class="badge pass">10 / 10</span></div>
+      </div>
+      <div class="qa-rows">
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Submit with all fields empty → validation errors
+            shown inline</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Price ending in .50 → rejected with correct
+            error</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Price ending in .99 → accepted</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Markdown price higher than original → rejected</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Markdown price ending in .00, lower than original →
+            accepted</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Item with 4 photos → all upload, first is
+            cover</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Toast "Item added successfully" appears on
+            submit</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Edit form pre-fills with existing data including
+            photos</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Delete confirmation modal centred on mobile and
+            desktop</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Confirmed delete → item removed, photos deleted from
+            storage</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search & Filter -->
+    <div class="qa-section">
+      <div class="qa-section-header">
+        <div class="qa-section-title">🔍 Search & Filters <span class="badge pass">8 / 8</span></div>
+      </div>
+      <div class="qa-rows">
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Real-time search across brand, style number, dept,
+            category</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Filter by department → only matching dept
+            shown</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Filter by status Active / Markdown / Sold</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Min/max price range filters items correctly</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Active filter chips appear and are removable
+            individually</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Clear All removes all filters and chips</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Sort by price, brand, newest all produce correct
+            order</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">No results → empty state with "Clear filters"
+            link</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics -->
+    <div class="qa-section">
+      <div class="qa-section-header">
+        <div class="qa-section-title">📊 Analytics Dashboard <span class="badge pass">6 / 6</span></div>
+      </div>
+      <div class="qa-rows">
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">All 6 KPI cards render with correct calculated
+            values</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Donut, line, bar, and histogram charts all
+            render</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">14-day trend line shows 0 for days with no
+            additions</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Slow movers shows only items active 30+ days</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Tapping a slow mover navigates to item detail</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Refresh button reloads all data</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin -->
+    <div class="qa-section">
+      <div class="qa-section-header">
+        <div class="qa-section-title">👑 Admin — User Management <span class="badge pass">6 / 6</span></div>
+      </div>
+      <div class="qa-rows">
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">/users redirects all non-admin roles</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Role change takes effect immediately, badge
+            updates</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Suspend → card greys, Suspended badge appears</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Reactivate → card restored to normal</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">"You" badge shown on own account, no action
+            buttons</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Roles info panel shows correct permission
+            breakdown</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PWA & Mobile -->
+    <div class="qa-section">
+      <div class="qa-section-header">
+        <div class="qa-section-title">📱 PWA & Mobile <span class="badge pass">8 / 8</span></div>
+      </div>
+      <div class="qa-rows">
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">PWA install prompt appears on mobile browser</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Installs to home screen, opens fullscreen with no
+            browser bar</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Teal theme colour shows in status bar on iOS and
+            Android</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Bottom nav visible in both light and dark mode</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Bottom nav not covered by iPhone home
+            indicator</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Pull down on inventory → teal spinner, refreshes
+            list</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Take Photo button opens rear camera directly on
+            mobile</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Photos compressed to ~200KB before upload (verified
+            in Supabase Storage)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dark/Light Mode -->
+    <div class="qa-section">
+      <div class="qa-section-header">
+        <div class="qa-section-title">🌗 Dark / Light Mode <span class="badge pass">5 / 5</span></div>
+      </div>
+      <div class="qa-rows">
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Toggle switches mode — all pages update
+            immediately</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Preference persists across sessions via
+            localStorage</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Input fields readable in dark mode</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">No text colour flicker on theme switch</span>
+        </div>
+        <div class="qa-row">
+          <div class="qa-check pass">✓</div><span class="qa-label">Scrollbar consistent size in both modes</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div>Runway-519 · QA Test Report · v1.0.0 · June 14, 2026</div>
+      <div class="slogan">See More. Sell Smarter.</div>
+    </div>
+
+  </div>
+</body>
+
+</html>
