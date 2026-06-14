@@ -69,16 +69,15 @@ The app mirrors how Winners actually operates: real 2-digit department codes,
 
 | Document                             | Description                                    |
 | ------------------------------------ | ---------------------------------------------- |
-| [Setup Guide](docs/docs/SETUP.md)         | Full local development setup from scratch      |
-| [Architecture](docs/docs/ARCHITECTURE.md) | System design, folder structure, data flow     |
-| [Database](docs/docs/DATABASE.md)         | Schema, tables, RLS policies, relationships    |
-| [API Reference](docs/docs/API.md)         | Supabase queries used throughout the app       |
-| [Walkthrough](docs/docs/WALKTHROUGH.md)   | Feature-by-feature user guide with screenshots |
-| [Roles & Permissions](docs/docs/ROLES.md) | Access control matrix and permission logic     |
-| [Testing](docs/docs/TESTING.md)           | Manual QA checklist and unit test coverage     |
-| [Deployment](docs/docs/DEPLOYMENT.md)     | Vercel deployment and environment setup        |
-| [Changelog](docs/docs/CHANGELOG.md)       | Version history and release notes              |
-| [Contributing](docs/CONTRIBUTING.md)      | How to contribute to this project              |
+| [Setup Guide](docs/SETUP.md)         | Full local development setup from scratch      |
+| [Architecture](docs/ARCHITECTURE.md) | System design, folder structure, data flow     |
+| [Database](docs/DATABASE.md)         | Schema, tables, RLS policies, relationships    |
+| [API Reference](docs/API.md)         | Supabase queries used throughout the app       |
+| [Walkthrough](docs/WALKTHROUGH.md)   | Feature-by-feature user guide with screenshots |
+| [Roles & Permissions](docs/ROLES.md) | Access control matrix and permission logic     |
+| [Testing](docs/TESTING.md)           | Manual QA checklist and unit test coverage     |
+| [Deployment](docs/DEPLOYMENT.md)     | Vercel deployment and environment setup        |
+| [Changelog](docs/CHANGELOG.md)       | Version history and release notes              |
 
 ---
 

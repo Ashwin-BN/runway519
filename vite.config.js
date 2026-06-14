@@ -82,18 +82,8 @@ export default defineConfig({
     host: true, // also exposes dev server to network
     port: 5173,
   },
-  // build: {
-  //   rollupOptions: {
-  //     output: {
-  //       manualChunks: {
-  //         'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-  //         charts: ['recharts'],
-  //         supabase: ['@supabase/supabase-js'],
-  //         forms: ['react-hook-form', '@hookform/resolvers', 'zod'],
-  //         utils: ['date-fns', 'lucide-react'],
-  //       },
-  //     },
-  //   },
-  //   chunkSizeWarningLimit: 600,
-  // },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+  },
 })
