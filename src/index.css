@@ -2,37 +2,215 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
+/* ── Brand tokens + theme variables */
+:root {
+  --teal: #00c896;
+  --teal-light: #00e5b0;
+  --teal-dark: #00a07a;
+  --navy: #0f1623;
+  --navy-surface: #1a2332;
+  --navy-border: #1e2d3d;
+
+  /* Component-level variables */
+  --page-bg: #f9fafb;
+  --nav-bg: #ffffff;
+  --nav-border: #e5e7eb;
+}
+
+.dark {
+  --page-bg: #0f1623;
+  --nav-bg: #1a2332;
+  --nav-border: #1e2d3d;
+}
+
+/* ── Reset — NO transition on * (causes flash) */
+*,
+*::before,
+*::after {
   -webkit-tap-highlight-color: transparent;
   box-sizing: border-box;
 }
 
+/* ── Base */
 body {
-  @apply bg-gray-50 text-gray-900;
   font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--page-bg);
+  color: #111827;
 }
 
-/* Safe area support for iPhone notch + home bar */
+.dark body {
+  color: #f1f5f9;
+}
+
+/* ── Smooth theme transition on body only */
+body {
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* ──────────────────────────────────────────
+   DARK MODE OVERRIDES
+   These are intentional !important overrides
+   because Tailwind generates these classes
+   without dark variants in our components
+────────────────────────────────────────── */
+
+/* Surfaces */
+.dark .bg-white {
+  background-color: #1a2332 !important;
+}
+.dark .bg-gray-50 {
+  background-color: #0f1623 !important;
+}
+.dark .bg-gray-100 {
+  background-color: #1e2d3d !important;
+}
+.dark .bg-gray-200 {
+  background-color: #243447 !important;
+}
+
+/* Borders */
+.dark .border-gray-100 {
+  border-color: #1e2d3d !important;
+}
+.dark .border-gray-200 {
+  border-color: #1e2d3d !important;
+}
+.dark .border-gray-300 {
+  border-color: #243447 !important;
+}
+
+/* Text */
+.dark .text-gray-900 {
+  color: #f1f5f9 !important;
+}
+.dark .text-gray-800 {
+  color: #f1f5f9 !important;
+}
+.dark .text-gray-700 {
+  color: #cbd5e1 !important;
+}
+.dark .text-gray-600 {
+  color: #94a3b8 !important;
+}
+.dark .text-gray-500 {
+  color: #64748b !important;
+}
+.dark .text-gray-400 {
+  color: #475569 !important;
+}
+
+/* Pink → Teal rebrand in dark mode */
+.dark .bg-pink-600 {
+  background-color: #00c896 !important;
+}
+.dark .bg-pink-700 {
+  background-color: #00a07a !important;
+}
+.dark .bg-pink-50 {
+  background-color: #0d2e26 !important;
+}
+.dark .text-pink-600 {
+  color: #00c896 !important;
+}
+.dark .text-pink-500 {
+  color: #00c896 !important;
+}
+.dark .border-pink-400 {
+  border-color: #00c896 !important;
+}
+
+/* Status badge backgrounds — keep readable in dark */
+.dark .bg-green-100 {
+  background-color: #052e16 !important;
+}
+.dark .text-green-700 {
+  color: #4ade80 !important;
+}
+.dark .bg-yellow-100 {
+  background-color: #422006 !important;
+}
+.dark .text-yellow-700 {
+  color: #fbbf24 !important;
+}
+.dark .bg-red-100 {
+  background-color: #2d0a0a !important;
+}
+.dark .text-red-500 {
+  color: #f87171 !important;
+}
+.dark .bg-blue-100 {
+  background-color: #0a1929 !important;
+}
+.dark .text-blue-700 {
+  color: #60a5fa !important;
+}
+.dark .bg-purple-100 {
+  background-color: #1e0a2d !important;
+}
+.dark .text-purple-700 {
+  color: #c084fc !important;
+}
+
+/* Shadows — soften in dark mode */
+.dark .shadow-sm {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+}
+.dark .shadow-md {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+.dark .shadow-lg {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Inputs */
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: #1e2d3d !important;
+  border-color: #243447 !important;
+  color: #f1f5f9 !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #475569 !important;
+}
+
+/* ── Safe area for iPhone */
 .safe-area-pb {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Smooth scrolling everywhere */
-* {
-  scroll-behavior: smooth;
-}
-
-/* Prevent text selection on UI elements */
+/* ── User select */
 button,
 a {
   -webkit-user-select: none;
   user-select: none;
 }
 
-/* Better tap feedback on mobile */
+/* ── Tap feedback */
 @media (hover: none) {
   button:active {
     opacity: 0.7;
     transform: scale(0.98);
   }
+}
+
+/* ── Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 99px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #1e2d3d;
 }

@@ -9,14 +9,16 @@ export default function Button({
   ...props
 }) {
   const base = `inline-flex items-center justify-center gap-2 font-medium 
-                rounded-xl transition-colors disabled:opacity-60 
+                rounded-xl transition-all duration-200 disabled:opacity-60 
                 disabled:cursor-not-allowed`
 
   const variants = {
-    primary: 'bg-pink-600 text-white hover:bg-pink-700',
-    secondary: 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+    primary: 'bg-brand-teal text-white hover:bg-brand-tealDark',
+    secondary:
+      'bg-gray-100 dark:bg-brand-border text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-brand-navyBorder',
     danger: 'bg-red-500 text-white hover:bg-red-600',
-    ghost: 'text-gray-500 hover:bg-gray-100 hover:text-gray-700',
+    ghost:
+      'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-brand-border hover:text-gray-700 dark:hover:text-white',
   }
 
   const sizes = {
