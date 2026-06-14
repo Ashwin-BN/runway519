@@ -125,22 +125,30 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div
-            className="w-14 h-14 bg-pink-600 rounded-2xl flex items-center
-                          justify-center mx-auto mb-3 shadow-lg shadow-pink-200"
+            className="mx-auto mb-4 w-20 h-20 rounded-3xl overflow-hidden
+                  shadow-2xl shadow-brand-teal/20"
           >
-            <Tag size={26} className="text-white" />
+            <img
+              src="/icons/icon-192.png"
+              alt="Runway-519"
+              className="w-full h-full object-cover"
+            />
           </div>
           <h1 className="text-2xl font-bold">
-            <span className="text-pink-600">Runway</span>
-            <span className="text-gray-800">-519</span>
+            <span className="text-brand-teal">Runway</span>
+            <span className="text-gray-800 dark:text-white">-519</span>
           </h1>
-          <p className="text-gray-400 text-sm mt-1">
-            Off-price inventory platform
+          <p className="text-gray-400 text-sm mt-1 italic">
+            See More. Sell Smarter.
           </p>
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl shadow-lg p-6">
+        <div
+          className="bg-white dark:bg-brand-surface rounded-2xl shadow-lg
+                    dark:shadow-brand-teal/5 p-6
+                    border border-transparent dark:border-brand-border"
+        >
           {/* Tab switcher */}
           <div className="flex bg-gray-100 rounded-xl p-1 mb-6">
             {['login', 'signup'].map((tab) => (
