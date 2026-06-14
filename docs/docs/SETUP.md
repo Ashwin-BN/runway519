@@ -26,7 +26,7 @@ git --version     # git version 2.x.x
 ## Step 1 — Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/runway-519.git
+git clone https://github.com/Ashwin-BN/runway519.git
 cd runway-519
 ```
 
