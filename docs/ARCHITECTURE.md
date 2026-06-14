@@ -8,21 +8,21 @@ Technical architecture and design decisions for Runway-519.
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│                   User's Device                      │
-│                                                      │
-│   React App (Vite)           PWA Service Worker      │
+│                   User's Device                     │
+│                                                     │
+│   React App (Vite)           PWA Service Worker     │
 │   ┌─────────────┐            ┌──────────────────┐   │
 │   │  Pages      │            │  Offline Cache   │   │
 │   │  Components │◄──────────►│  Static Assets   │   │
 │   │  Hooks      │            │  API Responses   │   │
 │   └──────┬──────┘            └──────────────────┘   │
-│          │                                           │
-└──────────┼───────────────────────────────────────────┘
+│          │                                          │
+└──────────┼──────────────────────────────────────────┘
            │ HTTPS
            ▼
 ┌─────────────────────────────────────────────────────┐
-│                    Supabase                          │
-│                                                      │
+│                    Supabase                         │
+│                                                     │
 │   ┌──────────┐  ┌──────────┐  ┌──────────────────┐  │
 │   │   Auth   │  │PostgreSQL│  │  Storage Bucket  │  │
 │   │  (JWT)   │  │  (RLS)   │  │  (item-photos)   │  │
@@ -31,8 +31,8 @@ Technical architecture and design decisions for Runway-519.
            │
            ▼
 ┌─────────────────────────────────────────────────────┐
-│                    Vercel                            │
-│            (Static file hosting + CDN)               │
+│                    Vercel                           │
+│            (Static file hosting + CDN)              │
 └─────────────────────────────────────────────────────┘
 ```
 
