@@ -16,7 +16,7 @@ built for store associates, designed for the floor.
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-5A0FC8?style=flat-square)](https://web.dev/progressive-web-apps)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
-**[Live Demo](https://runway519.vercel.app)** · **[Documentation](docs/)** · **[Report Bug](https://github.com/Ashwin-BN/runway519/issues)**
+**[Live Demo](https://runway519.vercel.app)** · **[User Guide](docs/USER_GUIDE.md)** · **[Report Bug](https://github.com/Ashwin-BN/runway519/issues)**
 
 </div>
 
@@ -67,17 +67,13 @@ The app mirrors how Winners actually operates: real 2-digit department codes,
 
 ## Documentation
 
-| Document                             | Description                                    |
-| ------------------------------------ | ---------------------------------------------- |
-| [Setup Guide](docs/SETUP.md)         | Full local development setup from scratch      |
-| [Architecture](docs/ARCHITECTURE.md) | System design, folder structure, data flow     |
-| [Database](docs/DATABASE.md)         | Schema, tables, RLS policies, relationships    |
-| [API Reference](docs/API.md)         | Supabase queries used throughout the app       |
-| [Walkthrough](docs/WALKTHROUGH.md)   | Feature-by-feature user guide with screenshots |
-| [Roles & Permissions](docs/ROLES.md) | Access control matrix and permission logic     |
-| [Test Report](https://Ashwin-BN.github.io/runway519/docs/TESTING.html) | 76/76 passing |
-| [Deployment](docs/DEPLOYMENT.md)     | Vercel deployment and environment setup        |
-| [Changelog](docs/CHANGELOG.md)       | Version history and release notes              |
+| Document                                                                  | Who It's For                                   |
+| ------------------------------------------------------------------------- | ---------------------------------------------- |
+| [User Guide](docs/USER_GUIDE.md)                                          | Store associates — how to use the app          |
+| [Admin Guide](docs/ADMIN_GUIDE.md)                                        | Store managers — managing users and roles      |
+| [Technical Overview](docs/TECHNICAL.md)                                   | Developers — architecture and design decisions |
+| [QA Test Report](https://Ashwin-BN.github.io/runway519/docs/TESTING.html) | 76/76 tests passing                            |
+| [Changelog](docs/CHANGELOG.md)                                            | Version history                                |
 
 ---
 
@@ -87,17 +83,24 @@ The app mirrors how Winners actually operates: real 2-digit department codes,
 git clone https://github.com/Ashwin-BN/runway519.git
 cd runway519
 npm install
-cp .env.example .env.local   # add your Supabase keys
+cp .env.example .env.local
 npm run dev
 ```
 
-Full setup instructions → [docs/SETUP.md](docs/SETUP.md)
+You will need a free [Supabase](https://supabase.com) account.
+Add your `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` to `.env.local`,
+then run the SQL in `supabase/schema.sql` to create the database tables.
 
 ---
 
-## Screenshots
+## Deployment
 
-> Coming after deployment — see [docs/WALKTHROUGH.md](docs/WALKTHROUGH.md) for feature details.
+Deployed on Vercel. Every push to `main` triggers an automatic redeploy.
+
+Set these environment variables in your Vercel project settings:
+
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
 
 ---
 
