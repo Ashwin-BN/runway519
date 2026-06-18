@@ -7,6 +7,7 @@ import ItemDetailPage from './pages/ItemDetailPage'
 import AnalyticsPage from './pages/AnalyticsPage'
 import UsersPage from './pages/UsersPage'
 import LoginPage from './pages/LoginPage'
+import ProfilePage from './pages/ProfilePage'
 import ProtectedRoute from './components/layout/ProtectedRoute'
 
 export default function App() {
@@ -17,6 +18,7 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>
+              <Route path="/profile" element={<ProfilePage />} />
               <Route path="/" element={<Navigate to="/inventory" replace />} />
               <Route path="/inventory" element={<InventoryPage />} />
               <Route path="/inventory/add" element={<AddItemPage />} />

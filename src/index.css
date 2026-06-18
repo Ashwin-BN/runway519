@@ -214,3 +214,14 @@ a {
 .dark ::-webkit-scrollbar-thumb {
   background: #1e2d3d;
 }
+
+/* Prevent bounce overscroll showing wrong bg color */
+html {
+  background-color: #0f1623; /* matches dark mode navy */
+  height: 100dvh;
+}
+
+body {
+  overscroll-behavior-y: none;
+  min-height: 100dvh;
+}

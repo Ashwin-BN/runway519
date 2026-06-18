@@ -16,24 +16,23 @@ export default function BottomNav() {
     : navItems
 
   return (
-    <div
-      className="flex items-center justify-around px-2 py-2 safe-area-pb"
-      style={{ backgroundColor: 'var(--nav-bg)' }}
-    >
+    <div className="flex items-center justify-around px-1 py-2">
       {items.map(({ to, icon: Icon, label }) => (
         <NavLink
           key={to}
           to={to}
           className={({ isActive }) =>
-            `flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl
-           transition-colors min-w-[60px]
-           ${
-             isActive ? 'text-brand-teal' : 'text-gray-400 hover:text-gray-600'
-           }`
+            `flex flex-col items-center gap-1 rounded-xl transition-colors
+         min-w-[60px] min-h-[44px] justify-center px-2
+         ${
+           isActive
+             ? 'text-brand-teal bg-brand-teal/10'
+             : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
+         }`
           }
         >
           <Icon size={20} />
-          <span className="text-[11px] font-medium">{label}</span>
+          <span className="text-[11px] font-medium leading-none">{label}</span>
         </NavLink>
       ))}
     </div>
