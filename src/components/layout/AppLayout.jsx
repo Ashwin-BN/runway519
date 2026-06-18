@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom'
 import BottomNav from './BottomNav'
-import Sidebar from './Sidebar'
+import Sidebar from './SideBar'
 import TopBar from './TopBar'
 import { ToastContainer } from '../ui/Toast'
 import { useToast } from '../../hooks/useToast'
